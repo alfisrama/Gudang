@@ -5,9 +5,14 @@
 		private $pass = "";
 		private $db = "persediaan";
 
-		 function __construct(){
-			$conn = mysqli_connect($this->host,$this->user,$this->pass);
-			mysqli_select_db($conn, $this->db);
+		//  function __construct(){
+		// 	$conn = mysql_connect($this->host,$this->user,$this->pass);
+		// 	mysql_select_db($conn, $this->db);
+		// }
+
+        public function sambungkan(){
+			mysql_connect($this->host,$this->user,$this->pass);
+			mysql_select_db($this->db);
 		}
 	}
 
@@ -16,31 +21,31 @@
     class Barang{
 
             public function tampil_barang(){
-                $qry = mysqli_query("SELECT * FROM is_barang ORDER BY nama_barang ASC");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM is_barang ORDER BY nama_barang ASC");
+                while ($pecah = mysql_fetch_array($qry)) {
                     $data[] = $pecah;
                 }
                 return $data;
             }
 
             public function simpan_barang($kdbarang,$nama,$satuan,$hargaj,$hargab,$stok){
-                mysqli_query("INSERT INTO is_barang(kode_barang,nama_barang,satuan,harga_jual,harga_beli,stok) 
+                mysql_query("INSERT INTO is_barang(kode_barang,nama_barang,satuan,harga_jual,harga_beli,stok) 
                     VALUES('$kdbarang','$nama','$satuan','$hargaj','$hargab','$stok')");
             }
 
             public function ubah_barang($nama,$satuan,$hargaj,$hargab,$stok,$kd){
-                mysqli_query("UPDATE is_barang SET nama_barang='$nama', satuan='$satuan', harga_jual='$hargaj',harga_beli='$hargab',stok='$stok' WHERE kd_barang = '$kd' ");
+                mysql_query("UPDATE is_barang SET nama_barang='$nama', satuan='$satuan', harga_jual='$hargaj',harga_beli='$hargab',stok='$stok' WHERE kd_barang = '$kd' ");
             }
 
             public function ambil_barang($id){
-                $qry = mysqli_query("SELECT * FROM is_barang WHERE kode_barang = '$id'");
-                $pecah = mysqli_fetch_assoc($qry);
+                $qry = mysql_query("SELECT * FROM is_barang WHERE kode_barang = '$id'");
+                $pecah = mysql_fetch_assoc($qry);
 
                 return $pecah;
             }
 
             public function hapus_barang($kd){
-                mysqli_query("DELETE FROM is_barang WHERE kode_barang = '$kd'");
+                mysql_query("DELETE FROM is_barang WHERE kode_barang = '$kd'");
             }
 
             public function simpan_barang_gudang($kdbarang,$hargaj,$kdbl){
@@ -49,15 +54,15 @@
                 $satuan = $dat['satuan'];
                 $hargab = $dat['harga_beli'];
                 $stok = $dat['item'];
-                mysqli_query("INSERT INTO is_barang(kode_barang,nama_barang,satuan,harga_jual,harga_beli,stok) 
+                mysql_query("INSERT INTO is_barang(kode_barang,nama_barang,satuan,harga_jual,harga_beli,stok) 
                     VALUES('$kdbarang','$nama','$satuan','$hargaj','$hargab','$stok')");
                 //update data barang pembelian dengan setatus 1
-                mysqli_query("UPDATE barang_keluar SET status='1' WHERE kd_barang_beli ='$kdbl'");
+                mysql_query("UPDATE barang_keluar SET status='1' WHERE kd_barang_beli ='$kdbl'");
             }
 
             public function ambil_barangpem($kd){
-                $qry = mysqli_query("SELECT * FROM barang_pembelian WHERE kd_barang_beli = '$kd'");
-                $pecah = mysqli_fetch_assoc($qry);
+                $qry = mysql_query("SELECT * FROM barang_pembelian WHERE kd_barang_beli = '$kd'");
+                $pecah = mysql_fetch_assoc($qry);
                 return $pecah;
             }
 
@@ -67,24 +72,24 @@
     // CLASS SUPPLIER
       class Supplier{
             public function tampil_supplier(){
-                $qry = mysqli_query("SELECT * FROM supplier");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM supplier");
+                while ($pecah = mysql_fetch_array($qry)) {
                 $data[] = $pecah;
                 }
                 return $data;
             }
             public function simpan_supplier($nama,$alamat){
-                mysqli_query("INSERT INTO supplier(nama_supplier,alamat) VALUES('$nama','$alamat')");
+                mysql_query("INSERT INTO supplier(nama_supplier,alamat) VALUES('$nama','$alamat')");
             }
             public function ubah_supplier($nama,$alamat,$id){
-                mysqli_query("UPDATE supplier SET nama_supplier='$nama', alamat='$alamat' WHERE kd_supplier = '$id'");
+                mysql_query("UPDATE supplier SET nama_supplier='$nama', alamat='$alamat' WHERE kd_supplier = '$id'");
             }
             public function hapus_supplier($id){
-                mysqli_query("DELETE FROM supplier WHERE kd_supplier= '$id'");
+                mysql_query("DELETE FROM supplier WHERE kd_supplier= '$id'");
             }
             public function ambil_supplier($id){
-                $qry = mysqli_query("SELECT * FROM supplier WHERE kd_supplier= '$id'");
-                $pecah = mysqli_fetch_assoc($qry);
+                $qry = mysql_query("SELECT * FROM supplier WHERE kd_supplier= '$id'");
+                $pecah = mysql_fetch_assoc($qry);
                 return $pecah;
             }
         }  
@@ -95,15 +100,15 @@
     class barangkeluar extends Barang {
 
             public function kode_otomatis(){
-                 $query_id = mysqlii_query($mysqlii, "SELECT RIGHT(kode_transaksi,5) as kode FROM barang_keluar
+                 $query_id = mysqli_query($mysqli, "SELECT RIGHT(kode_transaksi,5) as kode FROM barang_keluar
                                                 ORDER BY kode_transaksi DESC LIMIT 1")
-                                                or die('Ada kesalahan pada query tampil kode_transaksi : '.mysqlii_error($mysqlii));
+                                                or die('Ada kesalahan pada query tampil kode_transaksi : '.mysqli_error($mysqli));
 
-              $count = mysqlii_num_rows($query_id);
+              $count = mysqli_num_rows($query_id);
 
               if ($count <> 0) {
                   // mengambil data kode transaksi
-                  $data_id = mysqlii_fetch_assoc($query_id);
+                  $data_id = mysqli_fetch_assoc($query_id);
                   $koder    = $data_id['kode']+1;
               } else {
                   $koder = 1;
@@ -116,8 +121,8 @@
             }
         
             public function tampil_barang_keluar(){
-                $qry = mysqli_query("SELECT * FROM is_barang WHERE stok > 0 ORDER BY nama_barang ASC");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM is_barang WHERE stok > 0 ORDER BY nama_barang ASC");
+                while ($pecah = mysql_fetch_array($qry)) {
                     $data[] = $pecah;
                 }
                 return $data;
@@ -126,11 +131,11 @@
          
             
             public function tampil_keluar(){
-                $qry = mysqli_query("SELECT * FROM barang_keluar ORDER BY kode_transaksi DESC");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM barang_keluar ORDER BY kode_transaksi DESC");
+                while ($pecah = mysql_fetch_array($qry)) {
                     $data[]=$pecah;
                 }
-                $hitung = mysqli_num_rows($qry);
+                $hitung = mysql_num_rows($qry);
                     if ($hitung > 0) {
                         return $data;
                     }
@@ -140,11 +145,11 @@
             }
 
             public function cek_data_barangp($kode){
-                $qry = mysqli_query("SELECT * FROM is_keluar_sementara WHERE kode_transaksi = '$kode'");
+                $qry = mysql_query("SELECT * FROM is_keluar_sementara WHERE kode_transaksi = '$kode'");
                 if($qry===false){
-                    die(mysqli_error());
+                    die(mysql_error());
                 }
-                $hitung = mysqli_fetch_array($qry);
+                $hitung = mysql_fetch_array($qry);
                 
                 if ($hitung >=1) {
                     return true;
@@ -156,11 +161,11 @@
             }
 
             public function tampil_barang_sementara($kode){
-                $qry = mysqli_query($conn, "SELECT * FROM is_keluar_sementara WHERE kode_transaksi = '$kode'");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM is_keluar_sementara WHERE kode_transaksi = '$kode'");
+                while ($pecah = mysql_fetch_array($qry)) {
                     $data[]=$pecah;
                 }
-                $hitung = mysqli_num_rows($qry);
+                $hitung = mysql_num_rows($qry);
                 if ($hitung > 0) {
                     return $data;
                 }
@@ -176,12 +181,12 @@
                 $harga = $bar['harga_jual'];
                 $total = $harga * $item;
 
-                mysqli_query("INSERT INTO is_keluar_sementara(kode_transaksi, kode_barang, nama_barang, satuan, harga, item, total) 
+                mysql_query("INSERT INTO is_keluar_sementara(kode_transaksi, kode_barang, nama_barang, satuan, harga, item, total) 
                     VALUES('$kdpen', '$kdbarang','$namabr','$satuan','$harga','$item','$total')");
                 
                 // UPDATE STOK BARANG PADA TABEL BARANG
                 $kurang = $bar['stok'] - $item;
-                mysqli_query("UPDATE is_barang SET stok = '$kurang' WHERE kode_barang = '$kdbarang'");
+                mysql_query("UPDATE is_barang SET stok = '$kurang' WHERE kode_barang = '$kdbarang'");
             }
 
             public function cek_item($kdbarang,$item){
@@ -198,12 +203,12 @@
             }
 
             public function hitung_total_sementara($kode){
-                $qry = mysqli_query("SELECT sum(item) as jumlah FROM is_keluar_sementara WHERE kode_transaksi = '$kode'");
+                $qry = mysql_query("SELECT sum(item) as jumlah FROM is_keluar_sementara WHERE kode_transaksi = '$kode'");
                 if($qry===false){
-                    die(mysqli_error());
+                    die(mysql_error());
                 }
 
-                while($pecah = mysqli_fetch_array($qry))
+                while($pecah = mysql_fetch_array($qry))
                 {
                 $cek = $this->cek_data_barangp($kode);
                 if ($cek === true) {
@@ -216,28 +221,28 @@
                 }
             } 
             public function hitung_item_keluar($kdbrgkeluar){
-                $qry = mysqli_query("SELECT count(*) as jumlah FROM dbarang_keluar WHERE kode_transaksi = '$kdbrgkeluar'");
-                $pecah = mysqli_fetch_array($qry);
+                $qry = mysql_query("SELECT count(*) as jumlah FROM dbarang_keluar WHERE kode_transaksi = '$kdbrgkeluar'");
+                $pecah = mysql_fetch_array($qry);
 
                 return $pecah;  
             }
             public function simpan_brgkeluar($kdbrgkeluar,$tglbrgkeluar,$kdproject,$penerima,$alamat,$subtotal,$created_user){
                 
                 //insert keluar
-                mysqli_query("INSERT INTO barang_keluar(kode_transaksi,tanggal_keluar,kdproject,penerima,alamat,total_keluar,username) 
+                mysql_query("INSERT INTO barang_keluar(kode_transaksi,tanggal_keluar,kdproject,penerima,alamat,total_keluar,username) 
                 VALUES('$kdbrgkeluar','$tglbrgkeluar','$kdproject','$penerima','$alamat','$subtotal','$created_user')");
                 
                 //insert dkeluar
-                mysqli_query("INSERT INTO dbarang_keluar(kode_transaksi,kode_barang,nama_barang,jumlah) 
+                mysql_query("INSERT INTO dbarang_keluar(kode_transaksi,kode_barang,nama_barang,jumlah) 
                     SELECT kode_transaksi,kode_barang,nama_barang,item FROM is_keluar_sementara WHERE kode_transaksi='$kdbrgkeluar'");
 
                 //hapus semua keluar sementera
-                mysqli_query("DELETE FROM is_keluar_sementara WHERE kode_transaksi = '$kdbrgkeluar'");
+                mysql_query("DELETE FROM is_keluar_sementara WHERE kode_transaksi = '$kdbrgkeluar'");
             }
 
             public function ambil_kdpen(){
-                $qry = mysqli_query("SELECT * FROM barang_keluar ORDER BY kode_transaksi DESC LIMIT 1");
-                $pecah = mysqli_fetch_assoc($qry);
+                $qry = mysql_query("SELECT * FROM barang_keluar ORDER BY kode_transaksi DESC LIMIT 1");
+                $pecah = mysql_fetch_assoc($qry);
                 return $pecah;
             }
 
@@ -248,15 +253,15 @@
                 $datbar = $this->ambil_barang($datpen['kode_barang']);
                 $stok = $datpen['item']+$datbar['stok'];
                 $kdbar = $datpen['kode_barang'];
-                mysqli_query("UPDATE is_barang SET stok ='$stok' WHERE kode_barang = '$kdbar'");
+                mysql_query("UPDATE is_barang SET stok ='$stok' WHERE kode_barang = '$kdbar'");
 
                 //hapus keluar sementara
-                mysqli_query("DELETE FROM is_keluar_sementara WHERE id_keluar_sementara = '$kd'");
+                mysql_query("DELETE FROM is_keluar_sementara WHERE id_keluar_sementara = '$kd'");
             }
 
             public function ambil_keluar_sementara($kd){
-                $qry = mysqli_query("SELECT * FROM is_keluar_sementara WHERE id_keluar_sementara = '$kd'");
-                $pecah = mysqli_fetch_assoc($qry);
+                $qry = mysql_query("SELECT * FROM is_keluar_sementara WHERE id_keluar_sementara = '$kd'");
+                $pecah = mysql_fetch_assoc($qry);
                 return $pecah;
             }
      }
@@ -266,15 +271,15 @@
      class permintaan extends Barang {
 
             public function kode_otomatis(){
-                 $query_id = mysqlii_query($mysqlii, "SELECT RIGHT(kode_transaksi,5) as kode FROM permintaan
+                 $query_id = mysqli_query($mysqli, "SELECT RIGHT(kode_transaksi,5) as kode FROM permintaan
                                                 ORDER BY kode_transaksi DESC LIMIT 1")
-                                                or die('Ada kesalahan pada query tampil kode_transaksi : '.mysqlii_error($mysqlii));
+                                                or die('Ada kesalahan pada query tampil kode_transaksi : '.mysqli_error($mysqli));
 
-              $count = mysqlii_num_rows($query_id);
+              $count = mysqli_num_rows($query_id);
 
               if ($count <> 0) {
                   // mengambil data kode transaksi
-                  $data_id = mysqlii_fetch_assoc($query_id);
+                  $data_id = mysqli_fetch_assoc($query_id);
                   $koder    = $data_id['kode']+1;
               } else {
                   $koder = 1;
@@ -287,8 +292,8 @@
             }
         
             public function tampil_barang_permintaan(){
-                $qry = mysqli_query("SELECT * FROM is_barang WHERE stok > 0 ORDER BY nama_barang ASC");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM is_barang WHERE stok > 0 ORDER BY nama_barang ASC");
+                while ($pecah = mysql_fetch_array($qry)) {
                     $data[] = $pecah;
                 }
                 return $data;
@@ -297,11 +302,11 @@
          
             
             public function tampil_keluar(){
-                $qry = mysqli_query("SELECT * FROM permintaan ORDER BY kode_transaksi DESC");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM permintaan ORDER BY kode_transaksi DESC");
+                while ($pecah = mysql_fetch_array($qry)) {
                     $data[]=$pecah;
                 }
-                $hitung = mysqli_num_rows($qry);
+                $hitung = mysql_num_rows($qry);
                     if ($hitung > 0) {
                         return $data;
                     }
@@ -311,11 +316,11 @@
             }
 
             public function cek_data_barangp($kode){
-                $qry = mysqli_query("SELECT * FROM is_permintaan_sementara WHERE kode_transaksi = '$kode'");
+                $qry = mysql_query("SELECT * FROM is_permintaan_sementara WHERE kode_transaksi = '$kode'");
                 if($qry===false){
-                    die(mysqli_error());
+                    die(mysql_error());
                 }
-                $hitung = mysqli_fetch_array($qry);
+                $hitung = mysql_fetch_array($qry);
                 
                 if ($hitung >=1) {
                     return true;
@@ -327,11 +332,11 @@
             }
 
             public function tampil_permintaan_sementara($kode){
-                $qry = mysqli_query("SELECT * FROM is_permintaan_sementara WHERE kode_transaksi = '$kode'");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM is_permintaan_sementara WHERE kode_transaksi = '$kode'");
+                while ($pecah = mysql_fetch_array($qry)) {
                     $data[]=$pecah;
                 }
-                $hitung = mysqli_num_rows($qry);
+                $hitung = mysql_num_rows($qry);
                 if ($hitung > 0) {
                     return $data;
                 }
@@ -347,12 +352,12 @@
                 $harga = $bar['harga_jual'];
                 $total = $harga * $item;
 
-                mysqli_query("INSERT INTO is_permintaan_sementara(kode_transaksi, kode_barang, nama_barang, satuan, harga, item, total) 
+                mysql_query("INSERT INTO is_permintaan_sementara(kode_transaksi, kode_barang, nama_barang, satuan, harga, item, total) 
                     VALUES('$kdpen', '$kdbarang','$namabr','$satuan','$harga','$item','$total')");
                 
                 // UPDATE STOK BARANG PADA TABEL BARANG
                 $kurang = $bar['stok'] - $item;
-                mysqli_query("UPDATE is_barang SET stok = '$kurang' WHERE kode_barang = '$kdbarang'");
+                mysql_query("UPDATE is_barang SET stok = '$kurang' WHERE kode_barang = '$kdbarang'");
             }
 
             public function cek_item($kdbarang,$item){
@@ -369,12 +374,12 @@
             }
 
             public function hitung_total_sementara($kode){
-                $qry = mysqli_query("SELECT sum(total) as jumlah FROM is_permintaan_sementara WHERE kode_transaksi = '$kode'");
+                $qry = mysql_query("SELECT sum(total) as jumlah FROM is_permintaan_sementara WHERE kode_transaksi = '$kode'");
                 if($qry===false){
-                    die(mysqli_error());
+                    die(mysql_error());
                 }
 
-                while($pecah = mysqli_fetch_array($qry))
+                while($pecah = mysql_fetch_array($qry))
                 {
                 $cek = $this->cek_data_barangp($kode);
                 if ($cek === true) {
@@ -387,28 +392,28 @@
                 }
             }
             public function hitung_permintaan_keluar($kdpermintaan){
-                $qry = mysqli_query("SELECT count(*) as jumlah FROM dpermintaan WHERE kode_transaksi = '$kdpermintaan'");
-                $pecah = mysqli_fetch_array($qry);
+                $qry = mysql_query("SELECT count(*) as jumlah FROM dpermintaan WHERE kode_transaksi = '$kdpermintaan'");
+                $pecah = mysql_fetch_array($qry);
 
                 return $pecah;  
             }
             public function simpan_permintaan($kdpermintaan,$tglpermintaan,$kdproject,$penerima,$alamat,$subtotal,$created_user){
                 
                 //insert keluar
-                mysqli_query("INSERT INTO permintaan(kode_transaksi,tanggal_pm,kdproject,penerima,alamat,total_keluar,username) 
+                mysql_query("INSERT INTO permintaan(kode_transaksi,tanggal_pm,kdproject,penerima,alamat,total_keluar,username) 
                 VALUES('$kdpermintaan','$tglpermintaan','$kdproject','$penerima','$alamat','$subtotal','$created_user')");
                 
                 //insert dkeluar
-                mysqli_query("INSERT INTO dpermintaan(kode_transaksi,kode_barang,nama_barang,jumlah) 
+                mysql_query("INSERT INTO dpermintaan(kode_transaksi,kode_barang,nama_barang,jumlah) 
                     SELECT kode_transaksi,kode_barang,nama_barang,item FROM is_permintaan_sementara WHERE kode_transaksi='$kdpermintaan'");
 
                 //hapus semua keluar sementera
-                mysqli_query("DELETE FROM is_permintaan_sementara WHERE kode_transaksi = '$kdpermintaan'");
+                mysql_query("DELETE FROM is_permintaan_sementara WHERE kode_transaksi = '$kdpermintaan'");
             }
 
             public function ambil_kdpen(){
-                $qry = mysqli_query("SELECT * FROM permintaan ORDER BY kode_transaksi DESC LIMIT 1");
-                $pecah = mysqli_fetch_assoc($qry);
+                $qry = mysql_query("SELECT * FROM permintaan ORDER BY kode_transaksi DESC LIMIT 1");
+                $pecah = mysql_fetch_assoc($qry);
                 return $pecah;
             }
 
@@ -419,15 +424,15 @@
                 $datbar = $this->ambil_barang($datpen['kode_barang']);
                 $stok = $datbar['stok'] + $datpen['item'];
                 $kdbar = $datpen['kode_barang'];
-                mysqli_query("UPDATE is_barang SET stok ='$stok' WHERE kode_barang = '$kdbar'");
+                mysql_query("UPDATE is_barang SET stok ='$stok' WHERE kode_barang = '$kdbar'");
 
                 //hapus keluar sementara
-                mysqli_query("DELETE FROM is_permintaan_sementara WHERE id_permintaan_sementara = '$kd'");
+                mysql_query("DELETE FROM is_permintaan_sementara WHERE id_permintaan_sementara = '$kd'");
             }
 
             public function ambil_permintaan_sementara($kd){
-                $qry = mysqli_query("SELECT * FROM is_permintaan_sementara WHERE id_keluar_sementara = '$kd'");
-                $pecah = mysqli_fetch_assoc($qry);
+                $qry = mysql_query("SELECT * FROM is_permintaan_sementara WHERE id_keluar_sementara = '$kd'");
+                $pecah = mysql_fetch_assoc($qry);
                 return $pecah;
             }
      }
@@ -437,8 +442,8 @@
     class purchase extends Barang {
 
         public function kode_otomatis(){
-            $qry = mysqli_query("SELECT MAX(kode_purchase) AS kode FROM purchase");
-            $pecah = mysqli_fetch_array($qry);
+            $qry = mysql_query("SELECT MAX(kode_purchase) AS kode FROM purchase");
+            $pecah = mysql_fetch_array($qry);
             // insert year (if exists)
             $array_bulan = array(1=>"I","II","III", "IV", "V","VI","VII","VIII","IX","X", "XI","XII");
             $bulan = $array_bulan[date('n')];
@@ -456,8 +461,8 @@
         }
     
         public function tampil_barang_purchase(){
-            $qry = mysqli_query("SELECT * FROM is_barang WHERE stok > 0 ORDER BY nama_barang ASC");
-            while ($pecah = mysqli_fetch_array($qry)) {
+            $qry = mysql_query("SELECT * FROM is_barang WHERE stok > 0 ORDER BY nama_barang ASC");
+            while ($pecah = mysql_fetch_array($qry)) {
                 $data[] = $pecah;
             }
             return $data;
@@ -466,11 +471,11 @@
      
         
         public function tampil_purchase(){
-            $qry = mysqli_query("SELECT * FROM purchase ORDER BY kode_purchase DESC");
-            while ($pecah = mysqli_fetch_array($qry)) {
+            $qry = mysql_query("SELECT * FROM purchase ORDER BY kode_purchase DESC");
+            while ($pecah = mysql_fetch_array($qry)) {
                 $data[]=$pecah;
             }
-            $hitung = mysqli_num_rows($qry);
+            $hitung = mysql_num_rows($qry);
                 if ($hitung > 0) {
                     return $data;
                 }
@@ -480,11 +485,11 @@
         }
 
         public function cek_data_barangp($kode){
-            $qry = mysqli_query("SELECT * FROM barangpo_sementara WHERE kode_purchase = '$kode'");
+            $qry = mysql_query("SELECT * FROM barangpo_sementara WHERE kode_purchase = '$kode'");
             if($qry===false){
-                die(mysqli_error());
+                die(mysql_error());
             }
-            $hitung = mysqli_fetch_array($qry);
+            $hitung = mysql_fetch_array($qry);
             
             if ($hitung >=1) {
                 return true;
@@ -496,11 +501,11 @@
         }
 
         public function tampil_barang_sementara($kode){
-            $qry = mysqli_query("SELECT * FROM barangpo_sementara WHERE kode_purchase = '$kode'");
-            while ($pecah = mysqli_fetch_array($qry)) {
+            $qry = mysql_query("SELECT * FROM barangpo_sementara WHERE kode_purchase = '$kode'");
+            while ($pecah = mysql_fetch_array($qry)) {
                 $data[]=$pecah;
             }
-            $hitung = mysqli_num_rows($qry);
+            $hitung = mysql_num_rows($qry);
             if ($hitung > 0) {
                 return $data;
             }
@@ -512,7 +517,7 @@
         public function tambah_purchase_sementara($kode, $nama,$detail,$satuan,$harga_barangp,$item){
             $tot = $item * $harga_barangp;
 
-            mysqli_query("INSERT INTO barangpo_sementara(kode_purchase, nama_barangp,detail, satuan, harga_barangp, item,total) 
+            mysql_query("INSERT INTO barangpo_sementara(kode_purchase, nama_barangp,detail, satuan, harga_barangp, item,total) 
                 VALUES('$kode', '$nama','$detail','$satuan','$harga_barangp','$item','$tot')");
             
             // UPDATE STOK BARANG PADA TABEL BARANG
@@ -529,12 +534,12 @@
         }
 
         public function hitung_total_sementara($kode){
-            $qry = mysqli_query("SELECT sum(item) as jumlah FROM barangpo_sementara WHERE kode_purchase = '$kode'");
+            $qry = mysql_query("SELECT sum(item) as jumlah FROM barangpo_sementara WHERE kode_purchase = '$kode'");
             if($qry===false){
-                die(mysqli_error());
+                die(mysql_error());
             }
 
-            while($pecah = mysqli_fetch_array($qry))
+            while($pecah = mysql_fetch_array($qry))
             {
             $cek = $this->cek_data_barangp($kode);
             if ($cek === true) {
@@ -552,8 +557,8 @@
 
       
         public function hitung_item_purchase($kdpurchase){
-            $qry = mysqli_query("SELECT count(*) as jumlah FROM dpurchase WHERE kode_purchase = '$kdpurchase'");
-            $pecah = mysqli_fetch_array($qry);
+            $qry = mysql_query("SELECT count(*) as jumlah FROM dpurchase WHERE kode_purchase = '$kdpurchase'");
+            $pecah = mysql_fetch_array($qry);
 
             return $pecah;  
         }
@@ -562,20 +567,20 @@
         public function simpan_purchase($kdpurchase,$tglpurchase,$kdproject,$supplier,$subtotal,$created_user){
             
             //insert purchase
-            mysqli_query("INSERT INTO purchase(kode_purchase,tanggal_po,kode_project,kode_supplier,total,username) 
+            mysql_query("INSERT INTO purchase(kode_purchase,tanggal_po,kode_project,kode_supplier,total,username) 
             VALUES('$kdpurchase','$tglpurchase','$kdproject','$supplier','$subtotal','$created_user')");
             
             //insert dpurchase
-            mysqli_query("INSERT INTO dpurchase(kode_purchase,nama_barang,detail,harga_barangp,satuan,jumlah) 
+            mysql_query("INSERT INTO dpurchase(kode_purchase,nama_barang,detail,harga_barangp,satuan,jumlah) 
                 SELECT kode_purchase,nama_barangp,detail,harga_barangp,satuan,item FROM barangpo_sementara WHERE kode_purchase='$kdpurchase'");
 
             //hapus semua keluar sementera
-            mysqli_query("DELETE FROM barangpo_sementara WHERE kode_purchase = '$kdpurchase'");
+            mysql_query("DELETE FROM barangpo_sementara WHERE kode_purchase = '$kdpurchase'");
         }
 
         public function ambil_kdpo(){
-            $qry = mysqli_query("SELECT * FROM purchase ORDER BY kode_purchase DESC LIMIT 1");
-            $pecah = mysqli_fetch_assoc($qry);
+            $qry = mysql_query("SELECT * FROM purchase ORDER BY kode_purchase DESC LIMIT 1");
+            $pecah = mysql_fetch_assoc($qry);
             return $pecah;
         }
 
@@ -586,12 +591,12 @@
             
 
             //hapus keluar sementara
-            mysqli_query("DELETE FROM barangpo_sementara WHERE id_barangp = '$kd'");
+            mysql_query("DELETE FROM barangpo_sementara WHERE id_barangp = '$kd'");
         }
 
         public function ambil_purchase_sementara($kd){
-            $qry = mysqli_query("SELECT * FROM barangpo_sementara WHERE id_barangp = '$kd'");
-            $pecah = mysqli_fetch_assoc($qry);
+            $qry = mysql_query("SELECT * FROM barangpo_sementara WHERE id_barangp = '$kd'");
+            $pecah = mysql_fetch_assoc($qry);
             return $pecah;
         }
  }
@@ -603,15 +608,15 @@
  class project extends Barang {
 
             public function kode_otomatis(){
-                 $query_id = mysqlii_query($mysqlii, "SELECT RIGHT(kode_project,5) as kode FROM project
+                 $query_id = mysqli_query($mysqli, "SELECT RIGHT(kode_project,5) as kode FROM project
                                                 ORDER BY kode_project DESC LIMIT 1")
-                                                or die('Ada kesalahan pada query tampil kode_project : '.mysqlii_error($mysqlii));
+                                                or die('Ada kesalahan pada query tampil kode_project : '.mysqli_error($mysqli));
 
-              $count = mysqlii_num_rows($query_id);
+              $count = mysqli_num_rows($query_id);
 
               if ($count <> 0) {
                   // mengambil data kode transaksi
-                  $data_id = mysqlii_fetch_assoc($query_id);
+                  $data_id = mysqli_fetch_assoc($query_id);
                   $koder    = $data_id['kode']+1;
               } else {
                   $koder = 1;
@@ -624,8 +629,8 @@
             }
         
             public function tampil_barang_project(){
-                $qry = mysqli_query("SELECT * FROM is_barang WHERE stok > 0 ORDER BY nama_barang ASC");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM is_barang WHERE stok > 0 ORDER BY nama_barang ASC");
+                while ($pecah = mysql_fetch_array($qry)) {
                     $data[] = $pecah;
                 }
                 return $data;
@@ -634,11 +639,11 @@
          
             
             public function tampil_project(){
-                $qry = mysqli_query("SELECT * FROM project ORDER BY kode_project DESC");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM project ORDER BY kode_project DESC");
+                while ($pecah = mysql_fetch_array($qry)) {
                     $data[]=$pecah;
                 }
-                $hitung = mysqli_num_rows($qry);
+                $hitung = mysql_num_rows($qry);
                     if ($hitung > 0) {
                         return $data;
                     }
@@ -648,11 +653,11 @@
             }
 
             public function cek_data_barangp($kode){
-                $qry = mysqli_query("SELECT * FROM project_sementara WHERE kode_project = '$kode'");
+                $qry = mysql_query("SELECT * FROM project_sementara WHERE kode_project = '$kode'");
                 if($qry===false){
-                    die(mysqli_error());
+                    die(mysql_error());
                 }
-                $hitung = mysqli_fetch_array($qry);
+                $hitung = mysql_fetch_array($qry);
                 
                 if ($hitung >=1) {
                     return true;
@@ -664,11 +669,11 @@
             }
 
             public function tampil_project_sementara($kode){
-                $qry = mysqli_query("SELECT * FROM project_sementara WHERE kode_project = '$kode'");
-                while ($pecah = mysqli_fetch_array($qry)) {
+                $qry = mysql_query("SELECT * FROM project_sementara WHERE kode_project = '$kode'");
+                while ($pecah = mysql_fetch_array($qry)) {
                     $data[]=$pecah;
                 }
-                $hitung = mysqli_num_rows($qry);
+                $hitung = mysql_num_rows($qry);
                 if ($hitung > 0) {
                     return $data;
                 }
@@ -684,7 +689,7 @@
                 $harga = $bar['harga_jual'];
                 $total = $harga * $item;
 
-                mysqli_query("INSERT INTO project_sementara(kode_project, kode_barang, nama_barangp, satuan, harga, item, total) 
+                mysql_query("INSERT INTO project_sementara(kode_project, kode_barang, nama_barangp, satuan, harga, item, total) 
                     VALUES('$kdpen','$kdbarang','$namabr','$satuan','$harga','$item','$total')");
                 
                 // UPDATE STOK BARANG PADA TABEL BARANG
@@ -705,12 +710,12 @@
             }
 
             public function hitung_total_sementara($kode){
-                $qry = mysqli_query("SELECT sum(item) as jumlah FROM project_sementara WHERE kode_project = '$kode'");
+                $qry = mysql_query("SELECT sum(item) as jumlah FROM project_sementara WHERE kode_project = '$kode'");
                 if($qry===false){
-                    die(mysqli_error());
+                    die(mysql_error());
                 }
 
-                while($pecah = mysqli_fetch_array($qry))
+                while($pecah = mysql_fetch_array($qry))
                 {
                 $cek = $this->cek_data_barangp($kode);
                 if ($cek === true) {
@@ -723,28 +728,28 @@
                 }
             }
             public function hitung_item_keluar($kdproject){
-                $qry = mysqli_query("SELECT count(*) as jumlah FROM dproject WHERE kode_project = '$kdproject'");
-                $pecah = mysqli_fetch_array($qry);
+                $qry = mysql_query("SELECT count(*) as jumlah FROM dproject WHERE kode_project = '$kdproject'");
+                $pecah = mysql_fetch_array($qry);
 
                 return $pecah;  
             }
             public function simpan_project($kdproject,$tgltransaksi,$nama_project,$kdpurchase,$kdklien,$catatan,$subtotal,$created_user){
                 
                 //insert keluar
-                mysqli_query("INSERT INTO project(kode_project,tanggal_transaksi,nama_project,kode_purchase,kode_klien,catatan,total_keluar,username) 
+                mysql_query("INSERT INTO project(kode_project,tanggal_transaksi,nama_project,kode_purchase,kode_klien,catatan,total_keluar,username) 
                 VALUES('$kdproject','$tgltransaksi','$nama_project','$kdpurchase','$kdklien','$catatan','$subtotal','$created_user')");
                 
                 //insert dkeluar
-                mysqli_query("INSERT INTO dproject(kode_project,kode_barang,nama_barang,jumlah) 
+                mysql_query("INSERT INTO dproject(kode_project,kode_barang,nama_barang,jumlah) 
                     SELECT kode_project,kode_barang,nama_barangp,item FROM project_sementara WHERE kode_project='$kdproject'");
 
                 //hapus semua keluar sementera
-                mysqli_query("DELETE FROM project_sementara WHERE kode_project = '$kdproject'");
+                mysql_query("DELETE FROM project_sementara WHERE kode_project = '$kdproject'");
             }
 
             public function ambil_kdpen(){
-                $qry = mysqli_query("SELECT * FROM project ORDER BY kode_project DESC LIMIT 1");
-                $pecah = mysqli_fetch_assoc($qry);
+                $qry = mysql_query("SELECT * FROM project ORDER BY kode_project DESC LIMIT 1");
+                $pecah = mysql_fetch_assoc($qry);
                 return $pecah;
             }
 
@@ -758,12 +763,12 @@
                
 
                 //hapus keluar sementara
-                mysqli_query("DELETE FROM project_sementara WHERE id_keluar_sementara = '$kd'");
+                mysql_query("DELETE FROM project_sementara WHERE id_keluar_sementara = '$kd'");
             }
 
             public function ambil_project_sementara($kd){
-                $qry = mysqli_query("SELECT * FROM project_sementara WHERE id_keluar_sementara = '$kd'");
-                $pecah = mysqli_fetch_assoc($qry);
+                $qry = mysql_query("SELECT * FROM project_sementara WHERE id_keluar_sementara = '$kd'");
+                $pecah = mysql_fetch_assoc($qry);
                 return $pecah;
             }
      } 
@@ -775,31 +780,31 @@
 
  class Perusahaan{
     public function tampil_perusahaan(){
-        $qry = mysqli_query("SELECT * FROM perusahaan WHERE kd_perusahaan = '1'");
-        $pecah = mysqli_fetch_assoc($qry);
+        $qry = mysql_query("SELECT * FROM perusahaan WHERE kd_perusahaan = '1'");
+        $pecah = mysql_fetch_assoc($qry);
         return $pecah;
     }
     public function simpan_perusahaan($nama,$alamat,$pemilik,$kota){
-        mysqli_query("UPDATE perusahaan SET nama_perusahaan='$nama',alamat='$alamat', pemilik='$pemilik', kota='$kota' WHERE kd_perusahaan ='1' ");
+        mysql_query("UPDATE perusahaan SET nama_perusahaan='$nama',alamat='$alamat', pemilik='$pemilik', kota='$kota' WHERE kd_perusahaan ='1' ");
     }
 }
 
 class Nota{
     public function ambil_nota_barangkeluar($kdbrgkeluar){
-        $qry = mysqli_query("SELECT * FROM barang_keluar pen
+        $qry = mysql_query("SELECT * FROM barang_keluar pen
             JOIN dbarang_keluar dpen ON pen.kd_transaksi = dpen.kode_transaksi
             JOIN is_barang bar ON dpen.kode_barang = bar.kode_barang
             WHERE pen.kode_transaksi = '$kdbrgkeluar'");
-        $pecah = mysqli_fetch_assoc($qry);
+        $pecah = mysql_fetch_assoc($qry);
         return $pecah;
     }
     
     public function tampil_nota_barangkeluar($kdbrgkeluar){
-        mysqli_query("SELECT * FROM barang_keluar pen
+        mysql_query("SELECT * FROM barang_keluar pen
         JOIN dbarang_keluar dpen ON pen.kd_transaksi = dpen.kode_transaksi
         JOIN is_barang bar ON dpen.kode_barang = bar.kode_barang
         WHERE pen.kode_transaksi = '$kdbrgkeluar'");
-        while ($pecah = mysqli_fetch_array($qry)) {
+        while ($pecah = mysql_fetch_array($qry)) {
             $data[]=$pecah;
         }
        return $data;
@@ -808,7 +813,7 @@ class Nota{
 
 
 $DataBase = new DataBase();
-// $DataBase->sambungkan();
+$DataBase->sambungkan();
 $barangkeluar = new barangkeluar();
 $purchase= new purchase();
 $supplier = new supplier();
