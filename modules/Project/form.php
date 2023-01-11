@@ -1,12 +1,12 @@
 <?php
 
-include 'class/class.php'
+include 'class/class.php';
 
 ?>  
 
 <?php  
               // fungsi untuk membuat kode transaksi
-              $query_id = mysqli_query($mysqli, "SELECT RIGHT(kode_project,5) as kode FROM project
+              $query_id = mysqli_query($mysqli,"SELECT RIGHT(kode_project,5) as kode FROM project
                                                 ORDER BY kode_project DESC LIMIT 1")
                                                 or die('Ada kesalahan pada query tampil kode_project : '.mysqli_error($mysqli));
 
@@ -15,7 +15,7 @@ include 'class/class.php'
               if ($count <> 0) {
                   // mengambil data kode transaksi
                   $data_id = mysqli_fetch_assoc($query_id);
-                  $koder    = $data_id['kode']+1;
+                  $koder    = intval($data_id['kode'])+1;
               } else {
                   $koder = 1;
               }
@@ -146,7 +146,7 @@ include 'class/class.php'
                                       <select class="chosen-select" name="kdpurchase" data-placeholder="-- Pilih Kode PO --"autocomplete="off" required>
                                         <option value=""></option>
                                         <?php
-                                          $query_purchase = mysqli_query($mysqli, "SELECT kode_purchase FROM purchase ORDER BY kode_purchase ASC")
+                                          $query_purchase = mysqli_query($mysqli,"SELECT kode_purchase FROM purchase ORDER BY kode_purchase ASC")
                                                                                 or die('Ada kesalahan pada query tampil barang: '.mysqli_error($mysqli));
                                           while ($data_purchase = mysqli_fetch_assoc($query_purchase)) {
                                             echo"<option value=\"$data_purchase[kode_purchase]\"> $data_purchase[kode_purchase]  </option>";
@@ -162,7 +162,7 @@ include 'class/class.php'
                                       <select class="chosen-select" name="kdklien" data-placeholder="-- Pilih klien--"autocomplete="off" required>
                                         <option value=""></option>
                                         <?php
-                                          $query_klien = mysqli_query($mysqli, "SELECT kode_klien,nama_klien FROM klien ORDER BY kode_klien ASC")
+                                          $query_klien = mysqli_query($mysqli,"SELECT kode_klien,nama_klien FROM klien ORDER BY kode_klien ASC")
                                                                                 or die('Ada kesalahan pada query tampil klien: '.mysqli_error($mysqli));
                                           while ($data_klien = mysqli_fetch_assoc($query_klien)) {
                                             echo"<option value=\"$data_klien[kode_klien]\"> $data_klien[kode_klien] | $data_klien[nama_klien]  </option>";
